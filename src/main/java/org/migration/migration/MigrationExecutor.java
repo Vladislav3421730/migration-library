@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.io.File;
 import java.sql.SQLException;
 
 public class MigrationExecutor {
@@ -15,10 +16,12 @@ public class MigrationExecutor {
     }
     private MigrationExecutor(){}
 
+
+
     private static final Logger logger = LoggerFactory.getLogger(MigrationExecutor.class);
 
 
-    public void executedSqlScript(String sqlScript){
+    public void executedSqlScript(String sqlScript, File scriptFile){
 
         ConnectionManager.connect();
 
