@@ -10,7 +10,7 @@ CREATE TABLE schema_history
 
 CREATE TABLE migration_lock
 (
-    lock BOOLEAN NOT NULL DEFAULT FALSE,
+   is_locked lock BOOLEAN NOT NULL DEFAULT FALSE,
 );
 
 INSERT INTO migration_lock VALUES (FALSE)
