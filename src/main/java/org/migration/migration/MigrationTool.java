@@ -14,19 +14,19 @@ import static org.migration.utils.FileVersion.extractVersionFromFileName;
 public class MigrationTool {
 
     private static final Logger logger = LoggerFactory.getLogger(MigrationTool.class);
-    private final MigrationFileReader migrationFileReader=MigrationFileReader.getInstance();
-    private final MigrationExecutor migrationExecutor=MigrationExecutor.getInstance();
+    private final MigrationFileReader migrationFileReader = MigrationFileReader.getInstance();
+    private final MigrationExecutor migrationExecutor = MigrationExecutor.getInstance();
 
 
     public void executeAllMigrations() {
-       execute(migrationFileReader.readFilesFromResources());
+        execute(migrationFileReader.readFilesFromResources());
     }
 
-    public void executeAllMigrations(String filePath){
+    public void executeAllMigrations(String filePath) {
         execute(migrationFileReader.readFilesFromExternalDirectory(filePath));
     }
 
-    private void execute(List<File> sqlScripts){
+    private void execute(List<File> sqlScripts) {
 
         logger.info("Trying sorting sqlScripts files {}", sqlScripts.stream()
                 .map(File::getName)
@@ -38,9 +38,7 @@ public class MigrationTool {
                 .map(File::getName)
                 .collect(Collectors.joining(", ")));
 
-        sqlScripts.forEach((sqlScript) ->{
-            migrationExecutor.executeSqlScript(sqlScript);
-        });
+        sqlScripts.forEach(migrationExecutor::executeSqlScript);
     }
 
 }

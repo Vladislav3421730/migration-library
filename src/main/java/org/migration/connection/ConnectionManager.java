@@ -12,11 +12,11 @@ public class ConnectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
 
-    private static Connection connection=null;
+    private static Connection connection = null;
 
-    public static void connect()  {
+    public static void connect() {
         try {
-            logger.info("Trying to connect to db url {} username {} password {}",PropertiesUtils.getJdbcUrl(),PropertiesUtils.getUsername(),PropertiesUtils.getPassword());
+            logger.info("Trying to connect to db url {} username {} password {}", PropertiesUtils.getJdbcUrl(), PropertiesUtils.getUsername(), PropertiesUtils.getPassword());
 
             connection = DriverManager.getConnection(
                     PropertiesUtils.getJdbcUrl(),
@@ -25,12 +25,12 @@ public class ConnectionManager {
 
             logger.info("Successfully connected to database");
         } catch (SQLException e) {
-            logger.error("Failed to connect to db url {} username {} password {}",PropertiesUtils.getJdbcUrl(),PropertiesUtils.getUsername(),PropertiesUtils.getPassword());
+            logger.error("Failed to connect to db url {} username {} password {}", PropertiesUtils.getJdbcUrl(), PropertiesUtils.getUsername(), PropertiesUtils.getPassword());
             throw new RuntimeException(e);
         }
     }
 
-    public static Connection getConnection(){
+    public static Connection getConnection() {
         return connection;
     }
 

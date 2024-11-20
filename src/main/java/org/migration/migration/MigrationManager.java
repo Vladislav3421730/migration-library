@@ -18,30 +18,31 @@ public class MigrationManager {
     public static MigrationManager getInstance() {
         return INSTANCE;
     }
-    private MigrationManager() {}
+
+    private MigrationManager() {
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(MigrationManager.class);
 
-    private final String GET_ALL_MIGRATIONS="SELECT (version, script_name, executed_at, status) FROM schema_history";
-    private final String GET_CURRENT_MIGRATION=GET_ALL_MIGRATIONS + " ORDER BY executed_at DESC LIMIT 1";
+    private final String GET_ALL_MIGRATIONS = "SELECT (version, script_name, executed_at, status) FROM schema_history";
+    private final String GET_CURRENT_MIGRATION = GET_ALL_MIGRATIONS + " ORDER BY executed_at DESC LIMIT 1";
 
-    public List<MigrationReport> getAllMigrationReports(){
+    public List<MigrationReport> getAllMigrationReports() {
 
         ConnectionManager.connect();
 
-        List<MigrationReport> migrationReports=new ArrayList<>();
+        List<MigrationReport> migrationReports = new ArrayList<>();
 
         logger.info("Trying to get all reports...");
-        try(var connection=ConnectionManager.getConnection()) {
+        try (var connection = ConnectionManager.getConnection()) {
 
-            var statement=connection.createStatement();
+            var statement = connection.createStatement();
             var resultSet = statement.executeQuery(GET_ALL_MIGRATIONS);
 
-            logger.info("Getting {} reports",resultSet.getFetchSize());
-            while (resultSet.next()){
+            logger.info("Getting {} reports", resultSet.getFetchSize());
+            while (resultSet.next()) {
 
-                MigrationReport migrationReport=new MigrationReport();
-                migrationReport.setId(resultSet.getInt("id"));
+                MigrationReport migrationReport = new MigrationReport();
                 migrationReport.setVersion(resultSet.getString("version"));
                 migrationReport.setScript_name("script_name");
                 migrationReport.setExecuted_at(resultSet.getTimestamp("executed_at"));
@@ -58,19 +59,19 @@ public class MigrationManager {
 
     }
 
-    public MigrationReport getLastMigrationReport(){
+    public MigrationReport getLastMigrationReport() {
 
         ConnectionManager.connect();
 
-        MigrationReport migrationReport=new MigrationReport();
+        MigrationReport migrationReport = new MigrationReport();
 
         logger.info("Trying to get last Report");
-        try(var connection=ConnectionManager.getConnection()) {
+        try (var connection = ConnectionManager.getConnection()) {
 
-            var statement=connection.createStatement();
+            var statement = connection.createStatement();
             var resultSet = statement.executeQuery(GET_CURRENT_MIGRATION);
-            if(resultSet.next()){
-                migrationReport.setId(resultSet.getInt("id"));
+            if (resultSet.next()) {
+
                 migrationReport.setVersion(resultSet.getString("version"));
                 migrationReport.setScript_name("script_name");
                 migrationReport.setExecuted_at(resultSet.getTimestamp("executed_at"));
@@ -96,5 +97,9 @@ public class MigrationManager {
                 .collect(Collectors.toList());
     }
 
+    public void rollback() {
+        String version = getLastVersion();
+
+    }
 
 }

@@ -4,14 +4,12 @@ import java.sql.Timestamp;
 
 public class MigrationReport {
 
-    private int id;
     private String version;
     private String script_name;
     private Timestamp executed_at;
     private String status;
 
-    public MigrationReport(int id, String version, String script_name, Timestamp executed_at, String status) {
-        this.id = id;
+    public MigrationReport(String version, String script_name, Timestamp executed_at, String status) {
         this.version = version;
         this.script_name = script_name;
         this.executed_at = executed_at;
@@ -19,14 +17,6 @@ public class MigrationReport {
     }
 
     public MigrationReport() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getVersion() {

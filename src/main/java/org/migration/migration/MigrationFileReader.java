@@ -10,13 +10,14 @@ import java.util.stream.Collectors;
 
 public class MigrationFileReader {
 
-    private static final MigrationFileReader INSTANCE=new MigrationFileReader();
+    private static final MigrationFileReader INSTANCE = new MigrationFileReader();
 
     public static MigrationFileReader getInstance() {
         return INSTANCE;
     }
 
-    private MigrationFileReader(){}
+    private MigrationFileReader() {
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(MigrationFileReader.class);
 
@@ -30,12 +31,10 @@ public class MigrationFileReader {
             logger.info("Searching for migration files in resources: {}", SQL_FILES_PATH);
 
             File folder = new File(getClass().getClassLoader().getResource(SQL_FILES_PATH).getFile());
-            addFilesToFileList(folder,migrationFiles);
-        }
-        catch (NullPointerException e){
-            logger.error("Path {} didn't exist {}",SQL_FILES_PATH ,e.getMessage(), e);
-        }
-        catch (Exception e) {
+            addFilesToFileList(folder, migrationFiles);
+        } catch (NullPointerException e) {
+            logger.error("Path {} didn't exist {}", SQL_FILES_PATH, e.getMessage(), e);
+        } catch (Exception e) {
             logger.error("Error while reading files from resources: {}", e.getMessage(), e);
         }
         return migrationFiles;
@@ -47,13 +46,11 @@ public class MigrationFileReader {
         try {
             logger.info("Searching for migration files in external directory: {}", directoryPath);
             File folder = new File(directoryPath);
-            addFilesToFileList(folder,migrationFiles);
-        }
-        catch (NullPointerException e){
-            logger.error("Path {} didn't exist {}",SQL_FILES_PATH ,e.getMessage());
+            addFilesToFileList(folder, migrationFiles);
+        } catch (NullPointerException e) {
+            logger.error("Path {} didn't exist {}", SQL_FILES_PATH, e.getMessage());
             throw new RuntimeException(e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error while reading files from external directory: {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
@@ -64,11 +61,11 @@ public class MigrationFileReader {
 
         String lines;
 
-        try(BufferedReader reader=new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
-            logger.info("Trying to get script from file {}",file.getName());
-           lines=reader.lines().collect(Collectors.joining());
-           logger.info("Successfully getting script from file {} : {}",file.getName(),lines);
+            logger.info("Trying to get script from file {}", file.getName());
+            lines = reader.lines().collect(Collectors.joining());
+            logger.info("Successfully getting script from file {} : {}", file.getName(), lines);
 
         } catch (FileNotFoundException e) {
 
@@ -82,16 +79,16 @@ public class MigrationFileReader {
         return lines;
     }
 
-    private void addFilesToFileList(File folder,List<File> files){
+    private void addFilesToFileList(File folder, List<File> files) {
 
         if (folder.isDirectory()) {
+            char g='l';
             for (File file : folder.listFiles()) {
-                if (file.getName().matches("^V\\d+__.*\\.sql$")) {
+                if (file.getName().matches("^V.+__.*\\.sql$")) {
                     files.add(file);
                     logger.info("Found migration file: {}", file.getName());
-                }
-                else {
-                    logger.error("Error with file name {}",file.getName());
+                } else {
+                    logger.error("Error with file name {}", file.getName());
                 }
             }
         } else {
