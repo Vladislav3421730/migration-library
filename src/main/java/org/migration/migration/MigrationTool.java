@@ -19,11 +19,11 @@ public class MigrationTool {
 
 
     public void executeAllMigrations() {
-        execute(migrationFileReader.readFilesFromResources());
+        execute(migrationFileReader.readFilesFromResources('V'));
     }
 
     public void executeAllMigrations(String filePath) {
-        execute(migrationFileReader.readFilesFromExternalDirectory(filePath));
+        execute(migrationFileReader.readFilesFromExternalDirectory(filePath,'V'));
     }
 
     private void execute(List<File> sqlScripts) {
@@ -32,7 +32,8 @@ public class MigrationTool {
                 .map(File::getName)
                 .collect(Collectors.joining(", ")));
 
-        sqlScripts.sort(Comparator.comparing(firstFile -> extractVersionFromFileName(firstFile.getName())));
+        sqlScripts.sort(Comparator.
+                    comparing(firstFile -> extractVersionFromFileName(firstFile.getName())));
 
         logger.info("sqlScripts files after sorting {}", sqlScripts.stream()
                 .map(File::getName)

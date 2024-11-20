@@ -23,7 +23,7 @@ public class MigrationFileReader {
 
     private final static String SQL_FILES_PATH = "db/migration";
 
-    public List<File> readFilesFromResources() {
+    public List<File> readFilesFromResources(char migrationIndicator) {
 
         List<File> migrationFiles = new ArrayList<>();
         try {
@@ -31,7 +31,7 @@ public class MigrationFileReader {
             logger.info("Searching for migration files in resources: {}", SQL_FILES_PATH);
 
             File folder = new File(getClass().getClassLoader().getResource(SQL_FILES_PATH).getFile());
-            addFilesToFileList(folder, migrationFiles);
+            addFilesToFileList(folder, migrationFiles,migrationIndicator);
         } catch (NullPointerException e) {
             logger.error("Path {} didn't exist {}", SQL_FILES_PATH, e.getMessage(), e);
         } catch (Exception e) {
@@ -41,12 +41,12 @@ public class MigrationFileReader {
     }
 
 
-    public List<File> readFilesFromExternalDirectory(String directoryPath) {
+    public List<File> readFilesFromExternalDirectory(String directoryPath,char migrationIndicator) {
         List<File> migrationFiles = new ArrayList<>();
         try {
             logger.info("Searching for migration files in external directory: {}", directoryPath);
             File folder = new File(directoryPath);
-            addFilesToFileList(folder, migrationFiles);
+            addFilesToFileList(folder, migrationFiles,migrationIndicator);
         } catch (NullPointerException e) {
             logger.error("Path {} didn't exist {}", SQL_FILES_PATH, e.getMessage());
             throw new RuntimeException(e);
@@ -79,12 +79,12 @@ public class MigrationFileReader {
         return lines;
     }
 
-    private void addFilesToFileList(File folder, List<File> files) {
+    private void addFilesToFileList(File folder, List<File> files,char migrationIndicator) {
 
         if (folder.isDirectory()) {
             char g='l';
             for (File file : folder.listFiles()) {
-                if (file.getName().matches("^V.+__.*\\.sql$")) {
+                if (file.getName().matches("^"+migrationIndicator+".+__.*\\.sql$")) {
                     files.add(file);
                     logger.info("Found migration file: {}", file.getName());
                 } else {

@@ -46,23 +46,18 @@ public class MigrationExecutor {
             setLock(connection, true);
 
             try {
-                connection.setAutoCommit(false);
                 logger.info("Trying to execute query: {}", sqlScript);
 
                 var statement = connection.prepareStatement(sqlScript);
 
                 statement.execute();
-
                 MigrationReport successfulMigrationReport = saveMigrationStatus(connection, scriptFile.getName(), "SUCCESS");
-
-                connection.commit();
                 JsonReport.SaveReportInJson(successfulMigrationReport);
 
 
                 logger.info("Script executed successfully: {}", scriptFile.getName());
-            } catch (SQLException e) {
+            } catch (Exception e) {
 
-                connection.rollback();
                 logger.error("Error executing script {}: {}", scriptFile.getName(), e.getMessage());
                 MigrationReport failedMigration = saveMigrationStatus(connection, scriptFile.getName(), "FAILED");
                 JsonReport.SaveReportInJson(failedMigration);
@@ -70,7 +65,7 @@ public class MigrationExecutor {
             } finally {
                 setLock(connection, false);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             logger.error("Database error: {}", e.getMessage());
             throw new RuntimeException("Database error occurred", e);
         }

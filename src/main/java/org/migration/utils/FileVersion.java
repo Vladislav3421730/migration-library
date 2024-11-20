@@ -14,7 +14,7 @@ public class FileVersion {
     public static String extractVersionFromFileName(String fileName) {
 
         logger.info("Trying getting version from  file {}",fileName);
-        Pattern pattern = Pattern.compile("V(.+)__");
+        Pattern pattern = Pattern.compile("^[UV](.+)__.+.sql$");
         Matcher matcher = pattern.matcher(fileName);
         if (matcher.find()) {
             return String.valueOf(matcher.group(1));

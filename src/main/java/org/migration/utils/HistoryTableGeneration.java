@@ -1,7 +1,5 @@
 package org.migration.utils;
 
-import org.migration.connection.ConnectionManager;
-import org.migration.migration.MigrationExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +16,7 @@ public class HistoryTableGeneration {
             "    version           VARCHAR(50)  NOT NULL,\n" +
             "    script_name       VARCHAR(255) NOT NULL,\n" +
             "    executed_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n" +
-            "    status            VARCHAR(255),\n" +
-            "    UNIQUE (version)\n" +
+            "    status            VARCHAR(255)\n"+
             ");\n" +
             "\n" +
             "CREATE TABLE IF NOT EXISTS migration_lock\n" +
@@ -27,7 +24,7 @@ public class HistoryTableGeneration {
             "   is_locked BOOLEAN NOT NULL DEFAULT FALSE\n" +
             ");";
 
-    private static final String CHECK_LOCK_TABLE = "SELECT COUNT(*) FROM migration_lock;";
+    private static final String CHECK_LOCK_TABLE = "SELECT * FROM migration_lock;";
     private static final String INSERT_LOCK = "INSERT INTO migration_lock VALUES (FALSE);";
 
     public static void generateScript(Connection connection) {
@@ -36,7 +33,8 @@ public class HistoryTableGeneration {
             statement.execute(INIT_SQL);
 
             var resultSet = statement.executeQuery(CHECK_LOCK_TABLE);
-            if(resultSet.getFetchSize()==0) {
+            if(!resultSet.next()) {
+
                 statement.execute(INSERT_LOCK);
                 logger.info("Generate tables schema_history and  migration_lock");
             }

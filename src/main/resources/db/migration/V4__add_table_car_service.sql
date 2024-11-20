@@ -6,7 +6,7 @@ CREATE TABLE car_service
     service_description TEXT,
     car_id              INT,
     person_id           INT,
-    FOREIGN KEY (car_id) REFERENCES cars (id) ON DELETE CASCADE,
+    FOREIGN KEY (car_id) REFERENCES car (id) ON DELETE CASCADE,
     FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE CASCADE,
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
