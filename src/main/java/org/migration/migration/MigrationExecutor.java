@@ -62,7 +62,8 @@ public class MigrationExecutor {
                         logger.info("Script executed successfully: {}", sqlScriptFile.getName());
                     }
                 }
-                
+
+                connection.commit();
                 logger.info("All scripts executed successfully. Transaction committed.");
 
             } catch (Exception e) {
