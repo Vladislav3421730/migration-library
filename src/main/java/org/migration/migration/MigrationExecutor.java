@@ -66,7 +66,7 @@ public class MigrationExecutor {
                 connection.commit();
                 logger.info("All scripts executed successfully. Transaction committed.");
 
-            } catch (Exception e) {
+            } catch (SQLException e) {
 
                 connection.rollback();
 
@@ -80,7 +80,7 @@ public class MigrationExecutor {
             }
 
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.error("Database error: {}", e.getMessage());
         }
     }
