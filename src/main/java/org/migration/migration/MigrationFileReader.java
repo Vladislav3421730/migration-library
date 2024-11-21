@@ -82,7 +82,6 @@ public class MigrationFileReader {
     private void addFilesToFileList(File folder, List<File> files,char migrationIndicator) {
 
         if (folder.isDirectory()) {
-            char g='l';
             for (File file : folder.listFiles()) {
                 if (file.getName().matches("^"+migrationIndicator+".+__.*\\.sql$")) {
                     files.add(file);

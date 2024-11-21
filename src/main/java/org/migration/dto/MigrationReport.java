@@ -50,4 +50,14 @@ public class MigrationReport {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "MigrationReport{" +
+                "version='" + version + '\'' +
+                ", script_name='" + script_name + '\'' +
+                ", executed_at=" + executed_at +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

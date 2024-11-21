@@ -3,17 +3,16 @@ package org.migration.migration;
 
 import org.migration.connection.ConnectionManager;
 import org.migration.dto.MigrationReport;
-import org.migration.utils.FileVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.migration.utils.RollbackUtils.rollbackToPreviousVersion;
+import static org.migration.utils.RollbackUtils.rollbackToSomeVersion;
 
 public class MigrationManager {
 
@@ -27,10 +26,8 @@ public class MigrationManager {
     }
 
     private final MigrationFileReader migrationFileReader= MigrationFileReader.getInstance();
-    private final MigrationExecutor migrationExecutor = MigrationExecutor.getInstance();
 
     private static final Logger logger = LoggerFactory.getLogger(MigrationManager.class);
-
     private final String GET_ALL_MIGRATIONS = "SELECT version, script_name, executed_at, status FROM schema_history";
     private final String GET_CURRENT_MIGRATION = GET_ALL_MIGRATIONS + " ORDER BY executed_at DESC LIMIT 1";
 
@@ -48,7 +45,7 @@ public class MigrationManager {
             var statement = connection.createStatement();
             var resultSet = statement.executeQuery(GET_ALL_MIGRATIONS);
 
-            logger.info("Getting {} reports", resultSet.getFetchSize());
+
             while (resultSet.next()) {
 
                 MigrationReport migrationReport = new MigrationReport();
@@ -59,7 +56,7 @@ public class MigrationManager {
                 migrationReports.add(migrationReport);
 
             }
-
+            logger.info("Getting {} reports", migrationReports.size());
             return migrationReports;
 
         } catch (SQLException e) {
@@ -106,50 +103,35 @@ public class MigrationManager {
                 .collect(Collectors.toList());
     }
 
+
+
     public void rollback() {
 
-        logger.info("Trying to get all undo files");
-        List<File> files = migrationFileReader.readFilesFromResources('U');
-        List<String> versions=getAllVersions();
-        String rollbackVersion = versions.get(versions.size()-2);
-        logger.info("The version we should return to {}",rollbackVersion);
-
-        File rollBackScript = files.stream()
-                .filter(file->file.getName().matches("U" + rollbackVersion+ ".+.sql"))
-                .findFirst().get();
-
-        logger.info("Undo file for rollback {}",rollBackScript.getName());
-
-        migrationExecutor.executeSqlScript(rollBackScript);
-
-        logger.info("Version rolled back successfully to version {}",rollbackVersion);
+        logger.info("Trying to get all undo files from resources");
+        rollbackToPreviousVersion(migrationFileReader.readFilesFromResources('U'));
 
     }
 
-    public void rollback(String version){
+    public void rollbackToVersionByResources(String version){
 
-        logger.info("Trying to get all undo files");
-        List<String> allVersions=getAllVersions();
-        Optional<String> isCurrentVersion = allVersions.stream().filter(x -> x.equals(version)).findFirst();
+        logger.info("Trying to get all undo files from resources and roll back to version {}",version);
+        rollbackToSomeVersion(migrationFileReader.readFilesFromResources('U'),version);
 
-        if(!isCurrentVersion.isPresent()) {
-            logger.error("Version {} wasn't found in all versions {}",version,allVersions);
-            return;
-        }
-
-        List<File> scriptsToExecute = migrationFileReader.readFilesFromResources('U').stream()
-                .filter(file -> {
-                    return  FileVersion.extractVersionFromFileName(file.getName()).compareTo(version)>0 ||
-                            FileVersion.extractVersionFromFileName(file.getName()).equals(version);
-                })
-                .sorted(Comparator.comparing(File::getName).reversed())
-                .toList();
-
-        logger.info("Files that should be executed {} to version {}", scriptsToExecute.stream()
-                .map(File::getName)
-                .collect(Collectors.joining(", ")),version);
-
-        scriptsToExecute.forEach(migrationExecutor::executeSqlScript);
     }
+
+    public void rollback(String path){
+        logger.info("Trying to get all undo files from external directory {}",path);
+        rollbackToPreviousVersion(migrationFileReader.readFilesFromExternalDirectory(path,'U'));
+
+    }
+
+    public void rollback(String path,String version){
+
+        logger.info("Trying to get all undo files from resources and roll back to version {}",version);
+        rollbackToSomeVersion(migrationFileReader.readFilesFromExternalDirectory(path,'U'),version);
+    }
+
+
+
 
 }
