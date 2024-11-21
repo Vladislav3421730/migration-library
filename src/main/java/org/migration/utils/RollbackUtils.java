@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.migration.utils.FileVersion.extractVersionFromFileName;
+
 public class RollbackUtils {
 
 
@@ -24,9 +26,19 @@ public class RollbackUtils {
     public static void rollbackToPreviousVersion(List<File> fileList) {
 
         List<String> versions = migrationManager.getAllVersions();
+        String rollbackVersion;
 
-        String rollbackVersion = versions.get(versions.size() - 2);
-        logger.info("The version we should return to {}", rollbackVersion);
+        Optional<String> rollbackVersionOpt = versions.stream()
+                .filter(x -> x.compareTo(migrationManager.getLastVersion()) < 0)
+                .max(Comparator.comparing(String::valueOf));
+
+        if (rollbackVersionOpt.isPresent()) {
+            rollbackVersion = rollbackVersionOpt.get();
+            logger.info("The version we should return to {}", rollbackVersion);
+        } else {
+            logger.error("No rollback version found for the current version: {}", migrationManager.getLastVersion());
+            return;
+        }
 
         File rollBackScript = fileList.stream()
                 .filter(file -> file.getName().matches("U" + rollbackVersion + ".+.sql"))
@@ -44,6 +56,7 @@ public class RollbackUtils {
 
         logger.info("Trying to get all undo files");
         List<String> allVersions = migrationManager.getAllVersions();
+
         Optional<String> isCurrentVersion = allVersions.stream().filter(x -> x.equals(version)).findFirst();
 
         if (!isCurrentVersion.isPresent()) {
@@ -53,10 +66,12 @@ public class RollbackUtils {
 
         List<File> scriptsToExecute = fileList.stream()
                 .filter(file -> {
-                    return FileVersion.extractVersionFromFileName(file.getName()).compareTo(version) >= 0;
+                    return extractVersionFromFileName(file.getName()).compareTo(version) >= 0 &&
+                            extractVersionFromFileName(file.getName())
+                                    .compareTo(migrationManager.getLastVersion()) < 0;
                 })
                 .sorted(Comparator.comparing(File::getName).reversed())
-                .toList();
+                .collect(Collectors.toList());
 
         logger.info("Files that should be executed {} to version {}", scriptsToExecute.stream()
                 .map(File::getName)

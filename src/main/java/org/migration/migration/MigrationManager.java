@@ -28,8 +28,10 @@ public class MigrationManager {
     private final MigrationFileReader migrationFileReader= MigrationFileReader.getInstance();
 
     private static final Logger logger = LoggerFactory.getLogger(MigrationManager.class);
+
     private final String GET_ALL_MIGRATIONS = "SELECT version, script_name, executed_at, status FROM schema_history";
     private final String GET_CURRENT_MIGRATION = GET_ALL_MIGRATIONS + " ORDER BY executed_at DESC LIMIT 1";
+    private final String GET_CURRENT_VERSION=GET_ALL_MIGRATIONS+ " WHERE status='SUCCESS'" + " ORDER BY executed_at DESC LIMIT 1";
 
 
 
@@ -56,7 +58,7 @@ public class MigrationManager {
                 migrationReports.add(migrationReport);
 
             }
-            logger.info("Getting {} reports", migrationReports.size());
+            logger.info("Getting {} reports", migrationReports);
             return migrationReports;
 
         } catch (SQLException e) {
@@ -93,7 +95,29 @@ public class MigrationManager {
     }
 
     public String getLastVersion() {
-        return getLastMigrationReport().getVersion();
+        ConnectionManager.connect();
+
+        MigrationReport migrationReport = new MigrationReport();
+
+        logger.info("Trying to get last Report");
+        try (var connection = ConnectionManager.getConnection()) {
+
+            var statement = connection.createStatement();
+            var resultSet = statement.executeQuery(GET_CURRENT_VERSION);
+            if (resultSet.next()) {
+
+                migrationReport.setVersion(resultSet.getString("version"));
+                migrationReport.setScript_name("script_name");
+                migrationReport.setExecuted_at(resultSet.getTimestamp("executed_at"));
+                migrationReport.setStatus(resultSet.getString("status"));
+            }
+
+            return migrationReport.getVersion();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public List<String> getAllVersions() {

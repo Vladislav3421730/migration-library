@@ -32,8 +32,7 @@ public class MigrationTool {
                 .map(File::getName)
                 .collect(Collectors.joining(", ")));
 
-        sqlScripts.sort(Comparator.
-                    comparing(firstFile -> extractVersionFromFileName(firstFile.getName())));
+        sqlScripts.sort(Comparator.comparing(firstFile -> extractVersionFromFileName(firstFile.getName())));
 
         logger.info("sqlScripts files after sorting {}", sqlScripts.stream()
                 .map(File::getName)
