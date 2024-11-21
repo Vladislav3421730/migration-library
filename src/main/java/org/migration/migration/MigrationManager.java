@@ -52,7 +52,7 @@ public class MigrationManager {
 
                 MigrationReport migrationReport = new MigrationReport();
                 migrationReport.setVersion(resultSet.getString("version"));
-                migrationReport.setScript_name("script_name");
+                migrationReport.setScript_name(resultSet.getString("script_name"));
                 migrationReport.setExecuted_at(resultSet.getTimestamp("executed_at"));
                 migrationReport.setStatus(resultSet.getString("status"));
                 migrationReports.add(migrationReport);
@@ -81,7 +81,7 @@ public class MigrationManager {
             if (resultSet.next()) {
 
                 migrationReport.setVersion(resultSet.getString("version"));
-                migrationReport.setScript_name("script_name");
+                migrationReport.setScript_name(resultSet.getString("script_name"));
                 migrationReport.setExecuted_at(resultSet.getTimestamp("executed_at"));
                 migrationReport.setStatus(resultSet.getString("status"));
             }
@@ -107,7 +107,7 @@ public class MigrationManager {
             if (resultSet.next()) {
 
                 migrationReport.setVersion(resultSet.getString("version"));
-                migrationReport.setScript_name("script_name");
+                migrationReport.setScript_name(resultSet.getString("script_name"));
                 migrationReport.setExecuted_at(resultSet.getTimestamp("executed_at"));
                 migrationReport.setStatus(resultSet.getString("status"));
             }
