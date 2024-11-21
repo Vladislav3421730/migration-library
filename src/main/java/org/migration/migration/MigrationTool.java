@@ -13,6 +13,15 @@ import static org.migration.utils.FileVersion.extractVersionFromFileName;
 
 public class MigrationTool {
 
+    private static final MigrationTool INSTANCE = new MigrationTool();
+
+    public static MigrationTool getInstance() {
+        return INSTANCE;
+    }
+
+    private MigrationTool() {
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(MigrationTool.class);
     private final MigrationFileReader migrationFileReader = MigrationFileReader.getInstance();
     private final MigrationExecutor migrationExecutor = MigrationExecutor.getInstance();
@@ -38,7 +47,7 @@ public class MigrationTool {
                 .map(File::getName)
                 .collect(Collectors.joining(", ")));
 
-        sqlScripts.forEach(migrationExecutor::executeSqlScript);
+        migrationExecutor.executeSqlScript(sqlScripts);
     }
 
 }

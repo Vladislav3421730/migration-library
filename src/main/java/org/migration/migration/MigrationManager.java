@@ -58,7 +58,7 @@ public class MigrationManager {
                 migrationReports.add(migrationReport);
 
             }
-            logger.info("Getting {} reports", migrationReports);
+            logger.info("Successfully received {} reports", migrationReports);
             return migrationReports;
 
         } catch (SQLException e) {
@@ -85,7 +85,7 @@ public class MigrationManager {
                 migrationReport.setExecuted_at(resultSet.getTimestamp("executed_at"));
                 migrationReport.setStatus(resultSet.getString("status"));
             }
-
+            logger.info("Successfully received report, version {}",migrationReport.getVersion());
             return migrationReport;
 
         } catch (SQLException e) {

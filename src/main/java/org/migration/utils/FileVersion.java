@@ -17,7 +17,7 @@ public class FileVersion {
         Pattern pattern = Pattern.compile("^[UV](.+)__.+.sql$");
         Matcher matcher = pattern.matcher(fileName);
         if (matcher.find()) {
-            return String.valueOf(matcher.group(1));
+            return matcher.group(1);
         }
         logger.error("Something wrong with file {}",fileName);
         throw new RuntimeException();

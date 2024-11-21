@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.*;
+import java.util.List;
 
 public class MigrationExecutor {
 
@@ -29,45 +30,57 @@ public class MigrationExecutor {
     private final String SET_MIGRATION_LOCK = "UPDATE migration_lock SET is_locked = ?";
     private final String ADD_NEW_MIGRATION = "INSERT INTO schema_history (version, script_name, executed_at, status) VALUES (?, ?, ?, ?)";
 
-    public void executeSqlScript(File scriptFile) {
+    public void executeSqlScript(List<File> scriptFile) {
 
+        String filename = null;
         ConnectionManager.connect();
-
-        String sqlScript = migrationFileReader.getScriptFromSqlFile(scriptFile);
 
         try (Connection connection = ConnectionManager.getConnection()) {
 
             HistoryTableGeneration.generateScript(connection);
 
             if (isLocked(connection)) {
-                logger.error("Migration is locked {}", scriptFile.getName());
+                logger.error("Migration is locked");
                 throw new RuntimeException("Migration lock is active. Another process may be running migrations.");
             }
             setLock(connection, true);
 
+            connection.setAutoCommit(false);
+
             try {
-                logger.info("Trying to execute query: {}", sqlScript);
 
-                var statement = connection.prepareStatement(sqlScript);
+                for (File sqlScriptFile : scriptFile) {
 
-                statement.execute();
-                MigrationReport successfulMigrationReport = saveMigrationStatus(connection, scriptFile.getName(), "SUCCESS");
-                JsonReport.SaveReportInJson(successfulMigrationReport);
+                    filename=sqlScriptFile.getName();
+                    String sqlScript = migrationFileReader.getScriptFromSqlFile(sqlScriptFile);
+                    logger.info("Trying to execute query: {}", sqlScript);
 
+                    try (var statement = connection.prepareStatement(sqlScript)) {
+                        statement.execute();
+                        MigrationReport successfulMigrationReport = saveMigrationStatus(connection, sqlScriptFile.getName(), "SUCCESS");
+                        JsonReport.SaveReportInJson(successfulMigrationReport);
+                        logger.info("Script executed successfully: {}", sqlScriptFile.getName());
+                    }
+                }
+                
+                logger.info("All scripts executed successfully. Transaction committed.");
 
-                logger.info("Script executed successfully: {}", scriptFile.getName());
             } catch (Exception e) {
 
-                logger.error("Error executing script {}: {}", scriptFile.getName(), e.getMessage());
-                MigrationReport failedMigration = saveMigrationStatus(connection, scriptFile.getName(), "FAILED");
-                JsonReport.SaveReportInJson(failedMigration);
-                throw new RuntimeException("Failed to execute script " + scriptFile.getName(), e);
+                connection.rollback();
+
+                MigrationReport successfulMigrationReport = saveMigrationStatus(connection, filename, "SUCCESS");
+                JsonReport.SaveReportInJson(successfulMigrationReport);
+                
+                logger.error("Transaction rolled back due to an error: {}", e.getMessage());
             } finally {
-                setLock(connection, false);
+                setLock(connection,false);
+                connection.commit();
             }
+
+
         } catch (Exception e) {
             logger.error("Database error: {}", e.getMessage());
-            throw new RuntimeException("Database error occurred", e);
         }
     }
 
@@ -78,7 +91,8 @@ public class MigrationExecutor {
             if (resultSet.next()) {
                 return resultSet.getBoolean("is_locked");
             }
-            throw new RuntimeException("Lock table is empty. Initialization issue?");
+            logger.error("Lock table is empty. Initialization issue?");
+            return true;
         }
     }
 

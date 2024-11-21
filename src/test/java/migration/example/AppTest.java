@@ -20,7 +20,7 @@ public class AppTest
     @DisplayName("Test for generating tables in db. If table already exist, you don't need run this test")
     @Order(1)
     public void generateTableWithVersions(){
-        MigrationTool migrationTool=new MigrationTool();
+        MigrationTool migrationTool=MigrationTool.getInstance();
         migrationTool.executeAllMigrations();
     }
 

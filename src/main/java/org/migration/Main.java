@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
 
-        MigrationTool migrationTool = new MigrationTool();
+        MigrationTool migrationTool = MigrationTool.getInstance();
         migrationTool.executeAllMigrations(); // You can delete this string after first program starting
         MigrationManager migrationManager=MigrationManager.getInstance();
 

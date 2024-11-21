@@ -40,11 +40,11 @@ public class RollbackUtils {
             return;
         }
 
-        File rollBackScript = fileList.stream()
+        List<File> rollBackScript = fileList.stream()
                 .filter(file -> file.getName().matches("U" + rollbackVersion + ".+.sql"))
-                .findFirst().get();
+                .collect(Collectors.toList());
 
-        logger.info("Undo file for rollback {}", rollBackScript.getName());
+        logger.info("Undo file for rollback {}", rollBackScript.get(0).getName());
 
         migrationExecutor.executeSqlScript(rollBackScript);
 
@@ -77,7 +77,7 @@ public class RollbackUtils {
                 .map(File::getName)
                 .collect(Collectors.joining(", ")), version);
 
-        scriptsToExecute.forEach(migrationExecutor::executeSqlScript);
+        migrationExecutor.executeSqlScript(scriptsToExecute);
 
     }
 

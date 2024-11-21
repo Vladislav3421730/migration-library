@@ -11,8 +11,8 @@ public class PropertiesUtils {
     private static final Logger logger = LoggerFactory.getLogger(PropertiesUtils.class);
     private static final Properties properties=new Properties();
 
-    static {
 
+    static {
         logger.info("Trying to getting resources from properties file");
         try {
             properties.load(PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties"));
