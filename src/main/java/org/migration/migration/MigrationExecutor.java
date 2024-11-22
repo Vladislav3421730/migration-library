@@ -70,7 +70,7 @@ public class MigrationExecutor {
 
                 connection.rollback();
 
-                MigrationReport successfulMigrationReport = saveMigrationStatus(connection, filename, "SUCCESS");
+                MigrationReport successfulMigrationReport = saveMigrationStatus(connection, filename, "FAILED");
                 JsonReport.SaveReportInJson(successfulMigrationReport);
                 
                 logger.error("Transaction rolled back due to an error: {}", e.getMessage());
