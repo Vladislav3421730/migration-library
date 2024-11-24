@@ -37,7 +37,6 @@ public class MigrationExecutor {
      * @param fileList List of all files (no matter with U or V prefix)
      */
     public void executeSqlScript(List<File> fileList) {
-
         String filename = null;
         ConnectionManager.connect();
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -57,11 +56,8 @@ public class MigrationExecutor {
 
         setLock(connection, true);
         connection.setAutoCommit(false);
-
         try {
-
             for (File sqlScriptFile : scriptFile) {
-
                 filename=sqlScriptFile.getName();
                 String sqlScript = migrationFileReader.getScriptFromSqlFile(sqlScriptFile);
                 log.info("Trying to execute query: {}", sqlScript);
@@ -72,10 +68,8 @@ public class MigrationExecutor {
                     log.info("Script executed successfully: {}", sqlScriptFile.getName());
                 }
             }
-
             connection.commit();
             log.info("All scripts executed successfully. Transaction committed.");
-
         } catch (SQLException e) {
             connection.rollback();
             MigrationReport failedMigrationReport = saveMigrationStatus(connection, filename, "FAILED");
@@ -88,7 +82,6 @@ public class MigrationExecutor {
     }
 
     private boolean isLocked(Connection connection) throws SQLException {
-
         try (var statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(GET_LOCK)) {
             if (resultSet.next()) {
@@ -100,7 +93,6 @@ public class MigrationExecutor {
     }
 
     private void setLock(Connection connection, boolean lock) throws SQLException {
-
         try (PreparedStatement statement = connection.prepareStatement(SET_MIGRATION_LOCK)) {
             statement.setBoolean(1, lock);
             statement.executeUpdate();
@@ -112,7 +104,6 @@ public class MigrationExecutor {
     private MigrationReport saveMigrationStatus(Connection connection, String scriptName, String status) {
 
         try (PreparedStatement statement = connection.prepareStatement(ADD_NEW_MIGRATION)) {
-
             MigrationReport migrationReport = MigrationReport.builder()
                     .version(FileVersion.extractVersionFromFileName(scriptName))
                     .script_name(scriptName)
@@ -127,9 +118,7 @@ public class MigrationExecutor {
             statement.executeUpdate();
 
             log.info("Migration status saved: script={}, status={}", scriptName, status);
-
             return migrationReport;
-
         } catch (SQLException e) {
             log.error("Error saving migration status for script {}: {}", scriptName, e.getMessage());
             throw new RuntimeException("Failed to save migration status for " + scriptName, e);

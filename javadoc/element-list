@@ -3,4 +3,5 @@ org.library.connection
 org.library.dto
 org.library.migration
 org.library.test
+org.library.testMigration
 org.library.utils

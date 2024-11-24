@@ -56,7 +56,7 @@ public class MigrationFileReader {
         List<File> migrationFiles = new ArrayList<>();
         try {
             log.info("Searching for migration files in external directory: {}", directoryPath);
-            File folder = new File(directoryPath);
+            File folder = new File(new File(directoryPath).getAbsolutePath());
             addFilesToFileList(folder, migrationFiles,migrationIndicator);
         } catch (NullPointerException e) {
             log.error("Path {} didn't exist {}", SQL_FILES_PATH, e.getMessage());
@@ -74,19 +74,14 @@ public class MigrationFileReader {
      * @return sql script as a string
      */
     public String getScriptFromSqlFile(File file) {
-
         String lines;
-
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-
             log.info("Trying to get script from file {}", file.getName());
             lines = reader.lines().collect(Collectors.joining());
             log.info("Successfully getting script from file {} : {}", file.getName(), lines);
 
         } catch (FileNotFoundException e) {
-
             log.error("File wasn't found: {}", e.getMessage(), e);
-
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
