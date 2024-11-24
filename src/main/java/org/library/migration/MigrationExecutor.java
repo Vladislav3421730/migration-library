@@ -37,7 +37,7 @@ public class MigrationExecutor {
      * @param fileList List of all files (no matter with U or V prefix)
      */
     public void executeSqlScript(List<File> fileList) {
-        String filename = null;
+
         ConnectionManager.connect();
         try (Connection connection = ConnectionManager.getConnection()) {
             HistoryTableGeneration.generateScript(connection);
@@ -45,17 +45,18 @@ public class MigrationExecutor {
                 log.error("Migration is locked");
                 throw new RuntimeException("Migration lock is active. Another process may be running migrations.");
             }
-            executeLisFileSQL(connection,fileList,filename);
+            executeLisFileSQL(connection,fileList);
         } catch (SQLException e) {
             log.error("Database error: {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    private void executeLisFileSQL(Connection connection,List<File> scriptFile,String filename) throws SQLException {
+    private void executeLisFileSQL(Connection connection,List<File> scriptFile) throws SQLException {
 
         setLock(connection, true);
         connection.setAutoCommit(false);
+        String filename=null;
         try {
             for (File sqlScriptFile : scriptFile) {
                 filename=sqlScriptFile.getName();

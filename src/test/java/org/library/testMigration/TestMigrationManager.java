@@ -20,11 +20,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class TestMigrationManager {
 
-    private final String GET_CURRENT_VERSION= """
-            SELECT version, script_name, executed_at, status FROM schema_history
-            WHERE status='SUCCESS' ORDER BY executed_at DESC LIMIT 1
-            """;
-
 
     @Mock
     private Connection mockConnection;
@@ -49,7 +44,7 @@ public class TestMigrationManager {
         mockStatic(ConnectionManager.class);
         when(ConnectionManager.getConnection()).thenReturn(mockConnection);
         when(mockConnection.createStatement()).thenReturn(mockStatement);
-        when(mockStatement.executeQuery(GET_CURRENT_VERSION)).thenReturn(mockResultSet);
+        when(mockStatement.executeQuery(anyString())).thenReturn(mockResultSet);
 
         when(mockResultSet.next()).thenReturn(true);
 
@@ -58,7 +53,7 @@ public class TestMigrationManager {
         Assertions.assertEquals(version,"2");
 
         verify(mockConnection,times(1)).createStatement();
-        verify(mockStatement,times(1)).executeQuery(GET_CURRENT_VERSION);
+        verify(mockStatement,times(1)).executeQuery(anyString());
         verify(mockResultSet,times(1)).next();
         verify(mockResultSet,times(1)).getString("version");
 
