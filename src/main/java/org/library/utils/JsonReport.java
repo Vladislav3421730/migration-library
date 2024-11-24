@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Class for saving reports in json format
+ */
 @Slf4j
 public class JsonReport {
 

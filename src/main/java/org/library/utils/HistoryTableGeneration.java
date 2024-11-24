@@ -5,6 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * the class is used to generate the migration_history tables (similar to flyway_scema_history)
+ * and migration_lock (to prevent simultaneous migrations)
+ */
 @Slf4j
 public class HistoryTableGeneration {
 

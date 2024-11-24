@@ -7,6 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import static org.library.utils.RollbackUtils.rollbackToPreviousVersion;
 import static org.library.utils.RollbackUtils.rollbackToSomeVersion;
 
+/**
+ * Class for working with migration rollbacks, you can roll back to one
+ * version or to a specific one, undo files can be in
+ * resources or the path to the directory must be specified
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MigrationRollBackManager {

@@ -14,6 +14,9 @@ import java.io.File;
 import java.sql.*;
 import java.util.List;
 
+/**
+ * Class for executing SQL queries from a file list
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MigrationExecutor {

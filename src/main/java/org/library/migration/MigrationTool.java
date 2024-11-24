@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 
 import static org.library.utils.FileVersion.extractVersionFromFileName;
 
+/**
+ * Class for performing migrations Migration files can be located in resources,
+ * or you must specify the path to the directory in which they are located
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MigrationTool {

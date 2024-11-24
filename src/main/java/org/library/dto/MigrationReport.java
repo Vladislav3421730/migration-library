@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.sql.Timestamp;
 
+/**
+ * Simple DTO for creating reports and getting information from migration_history table
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

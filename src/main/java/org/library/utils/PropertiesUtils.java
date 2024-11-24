@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * Class for extracting data from application.properties
+ */
 @Slf4j
 public class PropertiesUtils {
     

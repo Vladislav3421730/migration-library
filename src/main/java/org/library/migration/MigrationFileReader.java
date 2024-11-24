@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The class is designed to work with files:
+ * search for files with the required prefix, extract a script from a file
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MigrationFileReader {

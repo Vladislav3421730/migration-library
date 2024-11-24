@@ -12,7 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * Using this class you can find out information about
+ * migration: version, all versions, latest report, all reports
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MigrationManager {

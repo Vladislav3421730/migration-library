@@ -7,12 +7,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Class for connecting to postgres database
+ * This class provides methods to establish and retrieve a connection to the database
+ */
 @Slf4j
 public class ConnectionManager {
 
     private static Connection connection = null;
 
-        public static void connect() {
+    /**
+     * Establishes a connection to the PostgreSQL database.
+     * @throws RuntimeException if a {@link SQLException} occurs during the connection attempt.
+     */
+    public static void connect() {
         try {
             log.info("Trying to connect to db url {} username {} password {}", PropertiesUtils.getJdbcUrl(), PropertiesUtils.getUsername(), PropertiesUtils.getPassword());
 

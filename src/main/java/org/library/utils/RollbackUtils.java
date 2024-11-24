@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 
 import static org.library.utils.FileVersion.extractVersionFromFileName;
 
+/**
+ * Class containing methods for rolling back migrations
+ */
 @Slf4j
 public class RollbackUtils {
 

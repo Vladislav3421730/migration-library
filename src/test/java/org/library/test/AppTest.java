@@ -1,8 +1,9 @@
-package migration.example;
+package org.library.test;
 
 
 import org.junit.jupiter.api.*;
 import org.library.migration.MigrationManager;
+import org.library.migration.MigrationRollBackManager;
 import org.library.migration.MigrationTool;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class AppTest
 {
 
     private final MigrationManager migrationManager=MigrationManager.getInstance();
+    private final MigrationRollBackManager migrationRollBackManager=MigrationRollBackManager.getInstance();
 
     @Test
     @DisplayName("Test for generating tables in db. If table already exist, you don't need run this test")
@@ -42,7 +44,7 @@ public class AppTest
     @DisplayName("Test roll back to previous migration")
     @Order(4)
     public void testRollbackOneVersion(){
-        migrationManager.rollback();
+        migrationRollBackManager.rollback();
         Assertions.assertEquals(migrationManager.getLastVersion(), "4");
     }
 
@@ -50,14 +52,8 @@ public class AppTest
     @DisplayName("Test roll back to some migration")
     @Order(5)
     public void testRollbackSomeVersion(){
-        migrationManager.rollbackToVersionByResources("2");
+        migrationRollBackManager.rollbackToVersionByResources("2");
         Assertions.assertEquals(migrationManager.getLastVersion(), "2");
     }
-
-
-
-
-
-
 
 }
