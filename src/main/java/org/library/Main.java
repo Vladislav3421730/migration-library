@@ -1,9 +1,8 @@
-package org.migration;
+package org.library;
 
-
-
-import org.migration.migration.MigrationManager;
-import org.migration.migration.MigrationTool;
+import org.library.migration.MigrationManager;
+import org.library.migration.MigrationRollBackManager;
+import org.library.migration.MigrationTool;
 
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -12,8 +11,10 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
 
         MigrationTool migrationTool = MigrationTool.getInstance();
-        migrationTool.executeAllMigrations(); // You can delete this string after first program starting
+        migrationTool.executeAllMigrations();
         MigrationManager migrationManager=MigrationManager.getInstance();
+        MigrationRollBackManager migrationRollBackManager=MigrationRollBackManager.getInstance();
+
 
         Scanner scanner = new Scanner(System.in);
 
@@ -53,14 +54,14 @@ public class Main {
 
                 case 5:
                     System.out.println("Откат на одну миграцию назад...");
-                    migrationManager.rollback();
+                    migrationRollBackManager.rollback();
                     break;
 
                 case 6:
                     System.out.print("Введите номер версии для отката: ");
                     String version = scanner.next();
                     System.out.println("Откат к версии " + version + "...");
-                    migrationManager.rollbackToVersionByResources(version);
+                    migrationRollBackManager.rollbackToVersionByResources(version);
                     break;
 
                 case 7:

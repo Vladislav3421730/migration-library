@@ -2,8 +2,8 @@ package migration.example;
 
 
 import org.junit.jupiter.api.*;
-import org.migration.migration.MigrationManager;
-import org.migration.migration.MigrationTool;
+import org.library.migration.MigrationManager;
+import org.library.migration.MigrationTool;
 
 import java.util.List;
 

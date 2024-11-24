@@ -1,45 +1,58 @@
-package org.migration.utils;
+package org.library.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Properties;
 
+@Slf4j
 public class PropertiesUtils {
-
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesUtils.class);
+    
     private static final Properties properties=new Properties();
-
-
+    
     static {
-        logger.info("Trying to getting resources from properties file");
+        log.info("Trying to getting resources from properties file");
         try {
             properties.load(PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties"));
-            logger.info("Properties loaded successfully");
+            log.info("Properties loaded successfully");
         } catch (IOException e) {
-            logger.error("Failed to get resources  {}",e.getMessage());
+            log.error("Failed to get resources  {}",e.getMessage());
             throw new RuntimeException("Ошибка загрузки конфигурации: " + "application.properties", e);
         }
     }
 
+    /**
+     * Getting the database url
+     * @return url in String format
+     */
     public static String getJdbcUrl() {
         return properties.getProperty("db.url");
     }
 
+    /**
+     * Getting username from db
+     * @return username in String format
+     */
     public static String getUsername() {
         return properties.getProperty("db.username");
     }
 
-
+    /**
+     * Getting password from db
+     * @return password in String format
+     */
     public static String getPassword() {
         return properties.getProperty("db.password");
     }
 
-
-
-
-
+    /**
+     * Getting the path to save .sql files in resources
+     * @return path in resources in String format
+     */
+    public static String getDbMigrationPath(){
+        return properties.getProperty("db.migration.path");
+    }
 
 
 
