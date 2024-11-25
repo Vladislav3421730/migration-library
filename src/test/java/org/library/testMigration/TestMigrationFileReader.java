@@ -31,7 +31,7 @@ public class TestMigrationFileReader {
     }
 
     @Test
-    @DisplayName("Test reading files from resources")
+    @DisplayName("Test reading files from path")
     public void TestReadFilesFromOtherPaths() {
 
         List<File> migrationFiles= migrationFileReader
